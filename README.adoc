@@ -8,3 +8,10 @@ image::images/poc-architecture.jpg[architecture]
 . The data is migrated on-premises AMQ Streams (Kafka) to Azure into another AMQ Streams cluster through Mirror Maker component.
 . To acomplish the sync with Postgres a Camel application is used
 
+== Installed Operators
+
+. AMQ Streams
+. Prometheus
+. Grafana
+
+
