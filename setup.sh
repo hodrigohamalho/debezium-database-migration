@@ -19,3 +19,15 @@ oc create -f kafka/monitoring/kafka-connect-metrics.yaml
 # oc create -f kafka/monitoring/kafka-mirror-maker-2-metrics.yaml
 
 oc policy add-role-to-user admin system:serviceaccount:database-migration:prometheus-server
+
+
+# oracle service account 
+oc create sa oracle
+
+oc adm policy add-scc-to-user anyuid -z oracle
+
+oc create -f oracle-database/oracle-db-secret.yml
+
+oc create -f oracle-database/database-deployment.yaml
+
+oc delete limitranges database-migration-core-resource-limits
