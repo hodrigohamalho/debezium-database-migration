@@ -1,0 +1,5 @@
+FROM registry.redhat.io/amq7/amq-streams-kafka-31-rhel8:2.1.0
+USER root:root
+COPY ./plugins/ /opt/kafka/plugins/ 
+COPY ./driver/ /opt/kafka/libs
+USER 1001
