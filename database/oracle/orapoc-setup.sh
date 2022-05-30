@@ -30,7 +30,6 @@ oc create -f $ORAPOC_SETUP_RESOURCES/orapoc-oradata-pvc.yaml
 # Deployment for the database.
 oc create -f $ORAPOC_SETUP_RESOURCES/orapoc-deployment.yaml
 
-
 # Running the setup scripts for Debezium
 
 ORACLE_DB_POD=$(oc get pod -lapp=oracle-19c-orapoc -ogo-template="{{(index .items 0).metadata.name}}")
@@ -46,8 +45,6 @@ oc exec -i $ORACLE_DB_POD -- bash -c 'sqlplus ot/Orcl1234@$ORACLE_PDB' <\
 # Set up the archivelog functionality on the CDB Oracle container
 oc exec -i $ORACLE_DB_POD -- bash -c 'sqlplus sys/$ORACLE_PWD as SYSDBA;' <\
   $ORAPOC_SETUP_RESOURCES/database-scripts/setup-archivelog.sql
-
-
 
 # --------------------------------------------------- NEED TO CHECK EXACTLY WHAT WE SHOULD BE DOING HERE ----------------------------------------------------
 # Set up tablespaces for logminer, set supplemental log configuration for the test table, create de c##dbzuser,
