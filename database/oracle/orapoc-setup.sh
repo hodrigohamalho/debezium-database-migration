@@ -30,7 +30,6 @@ oc create -f $ORAPOC_SETUP_RESOURCES/orapoc-oradata-pvc.yaml
 # Deployment for the database.
 oc create -f $ORAPOC_SETUP_RESOURCES/orapoc-deployment.yaml
 
-
 # Running the setup scripts for Debezium
 
 
