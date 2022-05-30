@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oracle-19c-orapoc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oracle-19c-orapoc
+  template:
+    metadata:
+      labels:
+        app: oracle-19c-orapoc
+        selector: oracle-19c-orapoc
+    spec:
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
+      securityContext:
+      # It is importatn to set an fsGroup, so the dynamic volume
+      # provisioner knows what UID/GID to set as volume owners.
+      # If it is not specified, the provisioner will set 0/0 as owner
+      # and the 'oracle' container user will not be allpwed to write on it.
+      # Group 54321 maps to the orainst group in the container
+        fsGroup: 54321
+      containers:
+        - name: oracle-19c-orapoc
+          image: quay.io/indhiotechnologies/oracle-database:19.3.0-ee
+          env:
+          # It is important that the ORACLE_SID variable value
+          # is written in uppercase. Otherwise, sqlplus will
+          # have issues connecting to the database
+          - name: ORACLE_SID
+            value: ORAPOC
+          # It is important that the ORACLE_PDB variable value
+          # is written in uppercase. Otherwise, sqlplus will
+          # have issues connecting to the database
+          - name: ORACLE_PDB
+            value: ORAPOCPDB
+          - name: ORACLE_PWD
+            valueFrom:
+              secretKeyRef:
+                name: orapoc-sys-password
+                key: oracle-sys-password
+          ports:
+          - name: tnslsnr-port
+            containerPort: 1521
+          - name: em-port
+            containerPort: 5500
+          volumeMounts:
+              - name: oradata
+                mountPath: /opt/oracle/oradata
+          terminationMessagePolicy: File
+      serviceName: oracle-19c-orapoc
+      serviceAccountName: oracle
+      serviceAccount: oracle
+      volumes:
+        - name: oradata
+          persistentVolumeClaim:
+            claimName: orapoc-oradata
