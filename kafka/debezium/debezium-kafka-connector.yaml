@@ -10,14 +10,14 @@ spec:
   config:
     tasks.max: 1
     connector.class: io.debezium.connector.oracle.OracleConnector
-    database.server.name: oracle19c
-    database.hostname: oracle19c
+    database.server.name: oracle-19c-orapoc
+    database.hostname: oracle-19c-orapoc
     database.port: 1521
     database.user: c##dbzuser
     database.password: dbz
-    database.dbname: ABC
-    database.pdb.name: ABCPDB1
-    database.history.kafka.bootstrap.servers: db-cluster-kafka-bootstrap:9092
+    database.dbname: ORAPOC
+    database.pdb.name: ORAPOCPDB
+    database.history.kafka.bootstrap.servers: my-cluster-kafka-bootstrap:9092
     database.history.kafka.topic: oracle19-history
     table.include.list: ot.keys
     message.key.columns: ot.keys:id
