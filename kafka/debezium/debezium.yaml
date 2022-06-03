@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: debezium-secret
+type: Opaque
+data:
+  username: YyMjZGJ6dXNlcg==
+  password: ZGJ6
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: connector-configuration-role
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  resourceNames: ["debezium-secret"]
+  verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: connector-configuration-role-binding
+subjects:
+- kind: ServiceAccount
+  name: debezium-connect-cluster-connect
+roleRef:
+  kind: Role
+  name: connector-configuration-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnect
+metadata:
+  name: debezium-connect-cluster
+  annotations:
+    strimzi.io/use-connector-resources: "true"
+spec:
+  version: 3.1.0
+  replicas: 1
+  bootstrapServers: my-cluster-kafka-bootstrap:9092
+  config:
+    config.providers: secrets
+    config.providers.secrets.class: io.strimzi.kafka.KubernetesSecretConfigProvider
+    group.id: connect-cluster
+    offset.storage.topic: connect-cluster-offsets
+    config.storage.topic: connect-cluster-configs
+    status.storage.topic: connect-cluster-status
+    # -1 means it will use the default replication factor configured in the broker
+    config.storage.replication.factor: -1
+    offset.storage.replication.factor: -1
+    status.storage.replication.factor: -1
+  image: quay.io/rhn_support_omelo/debezium-container-for-oracle:latest
+---
+  apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: debezium-connector-oracle
+  labels:
+    strimzi.io/cluster: debezium-connect-cluster
+spec:
+  class: io.debezium.connector.oracle.OracleConnector
+  tasksMax: 1
+  config:
+    tasks.max: 1
+    connector.class: io.debezium.connector.oracle.OracleConnector
+    database.server.name: oracle-19c-orapoc
+    database.hostname: oracle-19c-orapoc
+    database.port: 1521
+    database.user: c##dbzuser
+    database.password: dbz
+    database.dbname: ORAPOC
+    database.pdb.name: ORAPOCPDB
+    database.history.kafka.bootstrap.servers: my-cluster-kafka-bootstrap:9092
+    database.history.kafka.topic: oracle19-history
+    table.include.list: ot.keys
+    message.key.columns: ot.keys:id
+    transaction.topic: keys
+---
+kind: KafkaTopic
+apiVersion: kafka.strimzi.io/v1beta2
+metadata:
+  name: oracle19-history
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  partitions: 4
+  replicas: 3
+  config:
+    retention.ms: 604800000
+    segment.bytes: 1073741824
