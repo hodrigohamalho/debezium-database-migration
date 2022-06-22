@@ -39,6 +39,12 @@ spec:
   version: 3.1.0
   replicas: 1
   bootstrapServers: my-cluster-kafka-bootstrap:9092
+  metricsConfig:
+    type: jmxPrometheusExporter
+    valueFrom:
+      configMapKeyRef:
+        name: connect-metrics
+        key: metrics-config.yml
   config:
     config.providers: secrets
     config.providers.secrets.class: io.strimzi.kafka.KubernetesSecretConfigProvider
