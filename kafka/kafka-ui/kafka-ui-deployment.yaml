@@ -1,3 +1,24 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: kafka-ui
+  namespace: database-migration
+  labels:
+    app: kafka-ui
+    app.kubernetes.io/component: kafka-ui
+    app.kubernetes.io/instance: kafka-ui
+    app.kubernetes.io/name: kafka-ui
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  internalTrafficPolicy: Cluster
+  type: ClusterIP
+  sessionAffinity: None
+  selector:
+    app: kafka-ui
+---
 kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
@@ -39,7 +60,7 @@ spec:
     spec:
       containers:
         - name: kafka-ui
-          image: docker.io/provectuslabs/kafka-ui:latest            
+          image: docker.io/provectuslabs/kafka-ui:latest
           ports:
             - containerPort: 8080
               protocol: TCP
