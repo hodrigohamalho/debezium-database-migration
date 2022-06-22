@@ -1,0 +1,232 @@
+{
+	"schema": {
+		"type": "struct",
+		"fields": [
+			{
+				"type": "struct",
+				"fields": [
+					{
+						"type": "struct",
+						"fields": [
+							{
+								"type": "int32",
+								"optional": false,
+								"field": "scale"
+							},
+							{
+								"type": "bytes",
+								"optional": false,
+								"field": "value"
+							}
+						],
+						"optional": false,
+						"name": "io.debezium.data.VariableScaleDecimal",
+						"version": 1,
+						"doc": "Variable scaled decimal",
+						"field": "ID"
+					},
+					{
+						"type": "string",
+						"optional": false,
+						"field": "KEY"
+					},
+					{
+						"type": "string",
+						"optional": false,
+						"field": "VALUE"
+					}
+				],
+				"optional": true,
+				"name": "oracle_19c_orapoc.OT.KEYS.Value",
+				"field": "before"
+			},
+			{
+				"type": "struct",
+				"fields": [
+					{
+						"type": "struct",
+						"fields": [
+							{
+								"type": "int32",
+								"optional": false,
+								"field": "scale"
+							},
+							{
+								"type": "bytes",
+								"optional": false,
+								"field": "value"
+							}
+						],
+						"optional": false,
+						"name": "io.debezium.data.VariableScaleDecimal",
+						"version": 1,
+						"doc": "Variable scaled decimal",
+						"field": "ID"
+					},
+					{
+						"type": "string",
+						"optional": false,
+						"field": "KEY"
+					},
+					{
+						"type": "string",
+						"optional": false,
+						"field": "VALUE"
+					}
+				],
+				"optional": true,
+				"name": "oracle_19c_orapoc.OT.KEYS.Value",
+				"field": "after"
+			},
+			{
+				"type": "struct",
+				"fields": [
+					{
+						"type": "string",
+						"optional": false,
+						"field": "version"
+					},
+					{
+						"type": "string",
+						"optional": false,
+						"field": "connector"
+					},
+					{
+						"type": "string",
+						"optional": false,
+						"field": "name"
+					},
+					{
+						"type": "int64",
+						"optional": false,
+						"field": "ts_ms"
+					},
+					{
+						"type": "string",
+						"optional": true,
+						"name": "io.debezium.data.Enum",
+						"version": 1,
+						"parameters": {
+							"allowed": "true,last,false,incremental"
+						},
+						"default": "false",
+						"field": "snapshot"
+					},
+					{
+						"type": "string",
+						"optional": false,
+						"field": "db"
+					},
+					{
+						"type": "string",
+						"optional": true,
+						"field": "sequence"
+					},
+					{
+						"type": "string",
+						"optional": false,
+						"field": "schema"
+					},
+					{
+						"type": "string",
+						"optional": false,
+						"field": "table"
+					},
+					{
+						"type": "string",
+						"optional": true,
+						"field": "txId"
+					},
+					{
+						"type": "string",
+						"optional": true,
+						"field": "scn"
+					},
+					{
+						"type": "string",
+						"optional": true,
+						"field": "commit_scn"
+					},
+					{
+						"type": "string",
+						"optional": true,
+						"field": "lcr_position"
+					}
+				],
+				"optional": false,
+				"name": "io.debezium.connector.oracle.Source",
+				"field": "source"
+			},
+			{
+				"type": "string",
+				"optional": false,
+				"field": "op"
+			},
+			{
+				"type": "int64",
+				"optional": true,
+				"field": "ts_ms"
+			},
+			{
+				"type": "struct",
+				"fields": [
+					{
+						"type": "string",
+						"optional": false,
+						"field": "id"
+					},
+					{
+						"type": "int64",
+						"optional": false,
+						"field": "total_order"
+					},
+					{
+						"type": "int64",
+						"optional": false,
+						"field": "data_collection_order"
+					}
+				],
+				"optional": true,
+				"field": "transaction"
+			}
+		],
+		"optional": false,
+		"name": "oracle_19c_orapoc.OT.KEYS.Envelope"
+	},
+	"payload": {
+		"before": {
+			"ID": {
+				"scale": 0,
+				"value": "Ag=="
+			},
+			"KEY": "10",
+			"VALUE": "novoregistro@redhat.com"
+		},
+		"after": {
+			"ID": {
+				"scale": 0,
+				"value": "Ag=="
+			},
+			"KEY": "10",
+			"VALUE": "updateregister@redhat.com"
+		},
+		"source": {
+			"version": "1.9.2.Final",
+			"connector": "oracle",
+			"name": "oracle-19c-orapoc",
+			"ts_ms": 1655867499000,
+			"snapshot": "false",
+			"db": "ORAPOCPDB",
+			"sequence": null,
+			"schema": "OT",
+			"table": "KEYS",
+			"txId": "090002006a020000",
+			"scn": "2591631",
+			"commit_scn": "2591632",
+			"lcr_position": null
+		},
+		"op": "u",
+		"ts_ms": 1655867500036,
+		"transaction": null
+	}
+}
