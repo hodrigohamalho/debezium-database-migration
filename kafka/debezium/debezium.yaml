@@ -52,7 +52,7 @@ spec:
     status.storage.replication.factor: -1
   image: quay.io/rhn_support_omelo/debezium-container-for-oracle:latest
 ---
-  apiVersion: kafka.strimzi.io/v1beta2
+apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaConnector
 metadata:
   name: debezium-connector-oracle

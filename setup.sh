@@ -31,8 +31,4 @@ oc new-app -f database/postgres/postgresql-persistent-template.json --param=POST
 sh database/oracle/orapoc-setup.sh
 
 # Debezium 
-oc create -f kafka/debezium/debezium-secret.yaml
-oc create -f kafka/debezium/debezium-role.yaml
-oc create -f kafka/debezium/debezium-role-binding.yaml
-oc create -f kafka/debezium/kafka-connect.yaml
-oc create -f kafka/debezium/debezium-kafka-connector.yaml
+oc create -f kafka/debezium/debezium.yaml
