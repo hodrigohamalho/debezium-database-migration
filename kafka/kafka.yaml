@@ -45,9 +45,7 @@ spec:
       initialDelaySeconds: 15
       timeoutSeconds: 5
     storage:
-      type: persistent-claim
-      size: 100Gi
-      deleteClaim: false
+      type: ephemeral
     metricsConfig:
       type: jmxPrometheusExporter
       valueFrom:
