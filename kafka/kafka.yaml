@@ -28,13 +28,6 @@ spec:
       default.replication.factor: 3
       min.insync.replicas: 2
       inter.broker.protocol.version: "3.1"
-    storage:
-      type: jbod
-      volumes:
-      - id: 0
-        type: persistent-claim
-        size: 5Gi
-        deleteClaim: false
     metricsConfig:
       type: jmxPrometheusExporter
       valueFrom:
