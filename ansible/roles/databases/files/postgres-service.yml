@@ -1,0 +1,26 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: postgresql
+  namespace: database-migration
+  labels:
+    template: postgresql-persistent-template
+  annotations:
+    template.openshift.io/expose-uri: 'postgres://{.spec.clusterIP}:{.spec.ports[?(.name=="postgresql")].port}'
+spec:
+  clusterIP: 172.30.192.196
+  ipFamilies:
+    - IPv4
+  ports:
+    - name: postgresql
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
+  internalTrafficPolicy: Cluster
+  clusterIPs:
+    - 172.30.192.196
+  type: ClusterIP
+  ipFamilyPolicy: SingleStack
+  sessionAffinity: None
+  selector:
+    name: postgresql

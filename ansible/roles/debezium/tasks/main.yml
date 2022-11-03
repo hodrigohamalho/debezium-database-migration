@@ -1,0 +1,48 @@
+
+- name: Evaluate Debezium Secret
+  k8s:
+    state: present
+    namespace: '{{ cluster_project }}'
+    resource_definition: "{{ lookup('file', 'debezium-secret.yml') }}"
+
+- name: Evaluate Debezium Connector Configuration Role
+  k8s:
+    state: present
+    namespace: '{{ cluster_project }}'
+    resource_definition: "{{ lookup('file', 'connector-configuration-role.yml') }}"
+
+- name: Evaluate Debezium Connector Configuration Role Binding
+  k8s:
+    state: present
+    namespace: '{{ cluster_project }}'
+    resource_definition: "{{ lookup('file', 'connector-configuration-role-binding.yml') }}"
+
+- name: Evaluate Kafka Connect Metrics
+  k8s:
+    state: present
+    namespace: '{{ cluster_project }}'
+    resource_definition: "{{ lookup('file', 'connect-metrics.yml') }}"
+
+- name: Evaluate Kafka Topic used by Kafka Connect
+  k8s:
+    state: present
+    namespace: '{{ cluster_project }}'
+    resource_definition: "{{ lookup('template', 'kafka-topic.yml.j2') }}"
+
+- name: Evaluate Kafka Connect
+  k8s:
+    state: present
+    namespace: '{{ cluster_project }}'
+    resource_definition: "{{ lookup('template', 'kafka-connect.yml.j2') }}"
+
+- name: Evaluate Kafka Connect
+  k8s:
+    state: present
+    namespace: '{{ cluster_project }}'
+    resource_definition: "{{ lookup('template', 'kafka-connect.yml.j2') }}"
+
+- name: Evaluate Kafka Connector
+  k8s:
+    state: present
+    namespace: '{{ cluster_project }}'
+    resource_definition: "{{ lookup('template', 'kafka-connector.yml.j2') }}"

@@ -1,0 +1,50 @@
+- name: Evaluate Pod Monitor
+  k8s:
+    state: present
+    namespace: '{{ cluster_project}}'
+    resource_definition: "{{ lookup('template', 'strimzi_pod_monitor.yml.j2') }}"
+
+- name: Get Grafana ServiceAccount
+  k8s_info:
+    kind: ServiceAccount
+    name:  grafana-serviceaccount
+    namespace: '{{ cluster_project }}'
+    api_version: v1
+  register: r_grafana_sa
+  until:
+    - r_grafana_sa.resources is defined
+  retries: 10
+  delay: 15
+
+- name: Loop Secrets
+  include_tasks: tasks/loop_secrets.yml
+  with_items: '{{ r_grafana_sa.resources[0].secrets  }}'
+
+- name: Evaluate Grafana ServiceAccount permissons
+  k8s:
+    state: present
+    api_version: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    definition:
+      metadata:
+        name: thanos-metric-viewer
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: cluster-monitoring-view
+      subjects:
+      - kind: ServiceAccount
+        name: grafana-serviceaccount
+        namespace: '{{ cluster_project }}'
+
+- name: Evaluate Grafana Datasource
+  k8s:
+    state: present
+    resource_definition: "{{ lookup('template', 'grafana_datasource.yml.j2') }}"
+
+- name: Evaluate Kafka Dashboard
+  k8s:
+    state: present
+    namespace: '{{ cluster_project}}'
+    resource_definition: "{{ lookup('file', 'grafana_kafka_dashboard.yml') }}"
+

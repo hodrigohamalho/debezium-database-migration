@@ -1,0 +1,63 @@
+- name: Remove limit range
+  shell: oc delete limitranges --all -n {{ cluster_project }}
+  args:
+    executable: /bin/bash
+
+- name: Create Oracle Service Account
+  shell: oc create sa oracle -n {{ cluster_project }}
+  ignore_errors: yes
+  args:
+    executable: /bin/bash
+
+- name: Anyuid permission to oracle service account 
+  shell: oc adm policy add-scc-to-user anyuid -z oracle -n {{ cluster_project }}
+  args:
+    executable: /bin/bash
+
+- name: Evaluate Oracle Password Secret
+  k8s:
+    state: present
+    namespace: '{{ cluster_project }}'
+    resource_definition: "{{ lookup('file', 'oracle-password-secret.yml') }}"
+
+- name: Evaluate Oracle Persistence Volume
+  k8s:
+    state: present
+    namespace: '{{ cluster_project }}'
+    resource_definition: "{{ lookup('file', 'oracle-pv.yml') }}"
+
+- name: Evaluate Oracle Instance
+  k8s:
+    state: present
+    namespace: '{{ cluster_project }}'
+    resource_definition: "{{ lookup('file', 'oracle-deployment.yml') }}"
+
+- name: Evaluate Oracle Service
+  k8s:
+    state: present
+    namespace: '{{ cluster_project }}'
+    resource_definition: "{{ lookup('file', 'oracle-service.yml') }}"    
+
+- name: Evaluate Postgres Persistence Volume Claim
+  k8s:
+    state: present
+    namespace: '{{ cluster_project }}'
+    resource_definition: "{{ lookup('file', 'postgres-pvc.yml') }}"
+
+- name: Evaluate Postgres Secret
+  k8s:
+    state: present
+    namespace: '{{ cluster_project }}'
+    resource_definition: "{{ lookup('file', 'postgres-secret.yml') }}"
+
+- name: Evaluate Postgres Instance
+  k8s:
+    state: present
+    namespace: '{{ cluster_project }}'
+    resource_definition: "{{ lookup('file', 'postgres.yml') }}"
+
+- name: Evaluate Postgres Service
+  k8s:
+    state: present
+    namespace: '{{ cluster_project }}'
+    resource_definition: "{{ lookup('file', 'postgres-service.yml') }}"

@@ -1,0 +1,74 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: kafka-ui
+  labels:
+    app: kafka-ui
+    app.kubernetes.io/component: kafka-ui
+    app.kubernetes.io/instance: kafka-ui
+    app.kubernetes.io/name: kafka-ui
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  internalTrafficPolicy: Cluster
+  type: ClusterIP
+  sessionAffinity: None
+  selector:
+    app: kafka-ui
+  
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: kafka-ui
+  labels:
+    app: kafka-ui
+    app.kubernetes.io/component: kafka-ui
+    app.kubernetes.io/instance: kafka-ui
+    app.kubernetes.io/name: kafka-ui
+    app.openshift.io/runtime-version: latest
+spec:
+  to:
+    kind: Service
+    name: kafka-ui
+    weight: 100
+  port:
+    targetPort: 8080
+  wildcardPolicy: None
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: kafka-ui
+  labels:
+    app: kafka-ui
+    app.kubernetes.io/component: kafka-ui
+    app.kubernetes.io/instance: kafka-ui
+    app.kubernetes.io/name: kafka-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-ui
+  template:
+    metadata:
+      labels:
+        app: kafka-ui
+        deploymentconfig: kafka-ui
+    spec:
+      containers:
+        - name: kafka-ui
+          image: docker.io/provectuslabs/kafka-ui:latest
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS
+              value: '{{ kafka_cluster_name }}-kafka-bootstrap:9092'
+            - name: KAFKA_CLUSTERS_0_ZOOKEEPER
+              value: '{{ kafka_cluster_name }}-zookeeper-client:2181'
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30

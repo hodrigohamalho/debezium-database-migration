@@ -1,0 +1,19 @@
+kind: Service
+apiVersion: v1
+metadata:
+   name: oracle-19c-orapoc
+   labels:
+    app: oracle-19c-orapoc
+    selector: oracle-19c-orapoc
+spec:
+   ports:
+   - name: main-port
+     protocol: TCP 
+     port: 1521
+     targetPort: 1521
+   - name: em-port
+     protocol: TCP
+     port: 5500
+     targetPort: 5500
+   selector:
+     app: oracle-19c-orapoc

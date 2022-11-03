@@ -1,0 +1,67 @@
+# - name: Evaluate Operator Group
+#   when: not delete_demo
+#   k8s:
+#     state: present
+#     api_version: operators.coreos.com/v1
+#     kind: OperatorGroup
+#     definition:
+#       metadata:
+#         name: '{{ cluster_project }}-operatorgroup'
+#         namespace: '{{ cluster_project}}'
+#       spec:
+#         targetNamespaces:
+#         - '{{ cluster_project }}'
+
+# - name: Evaluate AMQ Streams Operator
+#   k8s:
+#     state: present
+#     kind: Subscription
+#     api_version: operators.coreos.com/v1alpha1
+#     definition:
+#       metadata:
+#         name: amq-streams
+#         namespace: '{{ cluster_project }}'
+#       spec:
+#         channel: stable
+#         installPlanApproval: Automatic
+#         name: amq-streams
+#         source: redhat-operators
+#         sourceNamespace: openshift-marketplace
+#         startingCSV: amqstreams.v2.0.0-0
+
+# - name: Waiting for AMQ Streams operator to install
+#   shell: set -o pipefail && oc get csv -n {{ cluster_project }} | grep amqstreams
+#   register: install_status
+#   until: "'Succeeded' in install_status.stdout"
+#   retries: 20
+#   delay: 15
+#   args:
+#     executable: /bin/bash
+
+- name: Evaluate Cluster ConfigMap
+  k8s:
+    state: present
+    namespace: '{{ cluster_project }}'
+    resource_definition: "{{ lookup('file', 'metrics-cm.yml') }}"
+
+
+- name: Evaluate Cluster Instance
+  k8s:
+    state: present
+    namespace: '{{ cluster_project }}'
+    resource_definition: "{{ lookup('template', 'cluster.yml.j2') }}"
+
+- name: Waiting for Cluster instance to be ready
+  shell: set -o pipefail && oc get kafka -n {{ cluster_project }} | grep {{ kafka_cluster_name }}
+  register: install_status
+  until: "'True' in install_status.stdout"
+  retries: 20
+  delay: 15
+  args:
+    executable: /bin/bash
+
+- name: Install Kafka UI
+  k8s:
+    state: present
+    namespace: '{{ cluster_project }}'
+    resource_definition: "{{ lookup('template', 'kafka-ui.yml.j2') }}"

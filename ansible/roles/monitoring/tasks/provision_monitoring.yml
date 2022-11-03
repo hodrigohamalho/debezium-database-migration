@@ -1,0 +1,52 @@
+- name: Evaluate User Workload Monitoring
+  k8s:
+    state: present
+    kind: ConfigMap
+    api_version: v1
+    definition:
+      metadata:
+        name: cluster-monitoring-config
+        namespace: openshift-monitoring
+      data:
+        config.yaml: |
+          enableUserWorkload: true
+          prometheusK8s:
+            volumeClaimTemplate:
+              metadata:
+                name: prometheusdb
+              spec:
+                storageClassName: gp2
+                resources:
+                  requests:
+                    storage: 20Gi
+
+- name: Evaluate Grafana Operator
+  k8s:
+    state: present
+    kind: Subscription
+    api_version: operators.coreos.com/v1alpha1
+    definition:
+      metadata:
+        name: grafana-operator
+        namespace: '{{ cluster_project }}'
+      spec:
+        channel: v4
+        installPlanApproval: Automatic
+        name: grafana-operator
+        source: community-operators
+        sourceNamespace: openshift-marketplace
+        startingCSV: grafana-operator.v4.7.1
+
+- name: Wait for Grafana Subscription to complete
+  shell: set -o pipefail && oc get csv -n {{ cluster_project }} | grep grafana-operator
+  register: install_status
+  until: "'Succeeded' in install_status.stdout"
+  retries: 20
+  delay: 15
+  args:
+    executable: /bin/bash
+
+- name: Evaluate Grafana Instance
+  k8s:
+    state: present
+    resource_definition: "{{ lookup('template', 'grafana_instance.yml.j2') }}"

@@ -1,0 +1,9 @@
+- name: Provision User Monitoring
+  include_tasks: provision_monitoring.yml
+  when:
+  - not delete_demo
+
+- name: Configure User Monitoring
+  include_tasks: configure_monitoring.yml
+  when:
+  - not delete_demo

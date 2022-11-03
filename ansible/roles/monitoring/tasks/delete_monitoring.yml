@@ -1,0 +1,9 @@
+- name: Evaluate User Workload Monitoring
+  k8s:
+    state: absent
+    kind: ConfigMap
+    api_version: v1
+    definition:
+      metadata:
+        name: cluster-monitoring-config
+        namespace: openshift-monitoring

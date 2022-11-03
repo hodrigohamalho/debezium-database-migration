@@ -28,27 +28,27 @@ oc create -f $ORAPOC_SETUP_RESOURCES/oracle.yaml
 # So far, the moment the database is created and ready to execute the scripts
 # cannot be reliably determined automatically because the readiness probe
 # for the database pod has not been properly configured.
-# As a temporary measure, the script will wait for manual input and then 
+# As a temporary measure, the scripat will wait for manual input and then 
 # continue executing the scripts
 
 #TODO: configure an appropriate readiness probe to detect the moment
 # the database creation process finshes so the SQLPlus scripts can be executed
 
-# echo "Pausing until confirmation that the database has been created. Press any key to continue"
-# read -n1
+echo "Pausing until confirmation that the database has been created. Press any key to continue"
+read -n1
 
-# ORACLE_DB_POD=$(oc get pod -lapp=oracle-19c-orapoc -ogo-template="{{(index .items 0).metadata.name}}")
+ORACLE_DB_POD=$(oc get pod -lapp=oracle-19c-orapoc -ogo-template="{{(index .items 0).metadata.name}}")
 
 # # Create user 'OT' with password 'Orcl1234' on the PDB Oracle container and grant CONNECT and RESOURCE rpivileges
-# oc exec -i $ORACLE_DB_POD -- bash -c 'sqlplus sys/$ORACLE_PWD@$ORACLE_PDB as SYSDBA' <\
-#   $ORAPOC_SETUP_RESOURCES/database-scripts/create-ot-user.sql
+oc exec -i $ORACLE_DB_POD -- bash -c 'sqlplus sys/$ORACLE_PWD@$ORACLE_PDB as SYSDBA' <\
+  database-scripts/create-ot-user.sql
 
 # # As user 'OT', create a test table on the PDB Oracle container and insert test data on it
-# oc exec -i $ORACLE_DB_POD -- bash -c 'sqlplus ot/Orcl1234@$ORACLE_PDB' <\
-#   $ORAPOC_SETUP_RESOURCES/database-scripts/create-ot-tables.sql
+oc exec -i $ORACLE_DB_POD -- bash -c 'sqlplus ot/Orcl1234@$ORACLE_PDB' <\
+  database-scripts/create-ot-tables.sql
 
 # # Set up the archivelog functionality on the CDB Oracle container
 # # Create a user for Debezium to observe the archive and supplemental logs
 # #Add supplemental log support for all columns in the test table
-# oc exec -i $ORACLE_DB_POD -- bash -c 'sqlplus sys/$ORACLE_PWD as SYSDBA;' <\
-#   $ORAPOC_SETUP_RESOURCES/database-scripts/setup-archivelog.sql
+oc exec -i $ORACLE_DB_POD -- bash -c 'sqlplus sys/$ORACLE_PWD as SYSDBA;' <\
+  database-scripts/setup-archivelog.sql
