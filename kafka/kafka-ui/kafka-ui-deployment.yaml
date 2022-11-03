@@ -2,7 +2,6 @@ kind: Service
 apiVersion: v1
 metadata:
   name: kafka-ui
-  namespace: database-migration
   labels:
     app: kafka-ui
     app.kubernetes.io/component: kafka-ui
