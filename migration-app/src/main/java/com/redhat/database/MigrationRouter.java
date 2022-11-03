@@ -10,7 +10,7 @@ public class MigrationRouter extends RouteBuilder{
 
         interceptFrom("kafka*").when(body().isNull()).stop();
          
-        from("kafka:oracle-19c-orapoc.OT.KEYS")
+        from("kafka:{{kafka.topic}}")
             .routeId("table-migration-consumer")
             .log("Message received from Kafka")
             .unmarshal().json(JsonLibrary.Jackson)

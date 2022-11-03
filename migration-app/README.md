@@ -79,3 +79,11 @@ Insert event in Kafka (Mock Debezium generation event)
 ```shell script
 kcat -b 0.0.0.0:9092 -t oracle-19c-orapoc.OT.KEYS -P debezium-event-examples/insert-content.json
 ```
+
+## Environment variables
+
+KAFKA_BOOTSTRAP=my-cluster-kafka-bootstrap:9092
+POSTGRES_HOST=localhost:5432/sampledb
+POSTGRES_USER=redhat
+POSTGRES_PASSWOR=redhat
+
